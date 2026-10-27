@@ -1,20 +1,298 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Conversor PPTX para LaTeX</title>
-    </head>
-    
-<body>
-    <h1>Conversor de Apresentações (.pptx) para LaTeX Beamer</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <p>
-            {{ form.as_p }}
-        </p>
-        <button type="submit">Converter</button>
-    </form>
+    <title>Conversor PPTX para LaTeX</title>
+
+    <style>
+        :root {
+            --azul: #243b53;
+            --azul-hover: #344f6b;
+            --fundo: #f5f5f2;
+            --branco: #ffffff;
+            --texto: #344054;
+            --texto-secundario: #667085;
+            --borda: #d9dee5;
+            --verde: #347453;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 40px 20px;
+            background: var(--fundo);
+            color: var(--texto);
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            width: 100%;
+            max-width: 760px;
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+            background: var(--azul);
+            color: var(--branco);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .marca {
+            margin: 0;
+            color: var(--azul);
+            font-size: 18px;
+        }
+
+        .submarca {
+            margin: 4px 0 0;
+            color: var(--texto-secundario);
+            font-size: 13px;
+        }
+
+        main {
+            width: 100%;
+            max-width: 620px;
+        }
+
+        .introducao {
+            margin-bottom: 28px;
+        }
+
+        .etiqueta {
+            color: var(--verde);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        h1 {
+            margin: 12px 0;
+            color: var(--azul);
+            font-size: clamp(28px, 5vw, 38px);
+            line-height: 1.2;
+        }
+
+        .descricao {
+            color: var(--texto-secundario);
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .cartao {
+            padding: 32px;
+            background: var(--branco);
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(36, 59, 83, 0.04);
+        }
+
+        .cartao h2 {
+            margin: 0 0 8px;
+            color: var(--azul);
+            font-size: 20px;
+        }
+
+        .instrucao {
+            margin: 0 0 24px;
+            color: var(--texto-secundario);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        form p {
+            margin: 0 0 24px;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 1px dashed #aab6c4;
+            border-radius: 8px;
+            background: #fafbfc;
+            color: var(--texto);
+            font-size: 14px;
+        }
+
+        input[type="file"]:focus-visible {
+            outline: 2px solid var(--azul);
+            outline-offset: 3px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 7px;
+            background: var(--azul);
+            color: var(--branco);
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--azul-hover);
+        }
+
+        button:focus-visible {
+            outline: 3px solid #8ba6c2;
+            outline-offset: 3px;
+        }
+
+        .mensagem-sucesso {
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            border: 1px solid #b7dfc6;
+            border-radius: 7px;
+            background: #eff8f1;
+            color: #24613e;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .mensagem-erro {
+            margin-bottom: 20px;
+            padding: 12px 14px;
+            border: 1px solid #f0c4c4;
+            border-radius: 7px;
+            background: #fff3f2;
+            color: #a12622;
+            font-size: 14px;
+        }
+
+        .detalhes {
+            display: flex;
+            gap: 12px;
+            margin-top: 22px;
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .detalhes span {
+            flex: 1;
+        }
+
+        footer {
+            max-width: 620px;
+            width: 100%;
+            margin-top: 36px;
+            padding-top: 18px;
+            border-top: 1px solid var(--borda);
+            color: var(--texto-secundario);
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 16px;
+            }
+
+            header {
+                margin-bottom: 36px;
+            }
+
+            .cartao {
+                padding: 22px;
+            }
+
+            .detalhes {
+                flex-direction: column;
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo" aria-hidden="true">P</div>
+
+        <div>
+            <p class="marca"><strong>PPTX para LaTeX</strong></p>
+            <p class="submarca">Conversor de apresentações acadêmicas</p>
+        </div>
+    </header>
+
+    <main>
+        <section class="introducao">
+            <span class="etiqueta">Ferramenta acadêmica</span>
+
+            <h1>Da apresentação ao LaTeX.</h1>
+
+            <p class="descricao">
+                Converta suas apresentações PowerPoint para LaTeX Beamer
+                e obtenha os arquivos para continuar trabalhando no seu projeto.
+            </p>
+        </section>
+
+        <section class="cartao">
+            <h2>Enviar apresentação</h2>
+
+            <p class="instrucao">
+                Selecione o arquivo PowerPoint que deseja converter.
+                O formato aceito é .pptx.
+            </p>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mensagem-sucesso" role="status">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit">Converter apresentação</button>
+            </form>
+
+            <div class="detalhes">
+                <span>✓ Arquivo PowerPoint (.pptx)</span>
+                <span>✓ Código LaTeX Beamer</span>
+                <span>✓ Resultado em ZIP</span>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Conversor PPTX para LaTeX Beamer
+        <br>
+        Desenvolvido para facilitar a conversão de apresentações acadêmicas.
+    </footer>
 </body>
 </html>
