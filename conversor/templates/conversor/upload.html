@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Conversor PPTX para LaTeX</title>
+    </head>
+    
+<body>
+    <h1>Conversor de Apresentações (.pptx) para LaTeX Beamer</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>
+            {{ form.as_p }}
+        </p>
+        <button type="submit">Converter</button>
+    </form>
+</body>
+</html>
